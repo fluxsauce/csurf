@@ -114,6 +114,11 @@ locations, in order:
   - `req.headers['x-csrf-token']` - the `X-CSRF-Token` HTTP request header.
   - `req.headers['x-xsrf-token']` - the `X-XSRF-Token` HTTP request header.
 
+##### perPage
+
+Determine order of operations; if set to `true`, then the CSRF token will be
+generated on every page load. Checks will occur before generation. 
+
 ## Example
 
 ### Simple express example

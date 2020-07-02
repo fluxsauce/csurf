@@ -101,17 +101,30 @@ function csurf (options) {
       return token
     }
 
-    // generate & set secret
-    if (!secret) {
+    if (opts.perPage) {
+      // verify the incoming token
+      if (!ignoreMethod[req.method] && !tokens.verify(secret, value(req))) {
+        return next(createError(403, 'invalid csrf token', {
+          code: 'EBADCSRFTOKEN'
+        }))
+      }
+
+      // Always generate & set secret
       secret = tokens.secretSync()
       setSecret(req, res, sessionKey, secret, cookie)
-    }
+    } else {
+      // generate & set secret
+      if (!secret) {
+        secret = tokens.secretSync()
+        setSecret(req, res, sessionKey, secret, cookie)
+      }
 
-    // verify the incoming token
-    if (!ignoreMethod[req.method] && !tokens.verify(secret, value(req))) {
-      return next(createError(403, 'invalid csrf token', {
-        code: 'EBADCSRFTOKEN'
-      }))
+      // verify the incoming token
+      if (!ignoreMethod[req.method] && !tokens.verify(secret, value(req))) {
+        return next(createError(403, 'invalid csrf token', {
+          code: 'EBADCSRFTOKEN'
+        }))
+      }
     }
 
     next()
